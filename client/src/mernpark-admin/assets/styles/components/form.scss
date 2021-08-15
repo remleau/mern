@@ -55,15 +55,23 @@
   }
 }
 
-.errorFormMessage {
-  @apply px-3 py-2;
-  @apply bg-red;
-  @apply text-sm font-medium italic text-lightGrey;
+.formMessage {
+  @apply px-3 py-3 mb-6;
+  @apply border-1 border-transparent text-sm font-medium;
+
+  &.resolve {
+    @apply border-green text-green;
+  }
+
+  &.error {
+    @apply border-red text-red;
+  }
 }
 
 .formHalf {
   @apply w-full;
   @apply flex justify-between;
+  @apply mb-4;
 
   > div {
     width: 49% !important;

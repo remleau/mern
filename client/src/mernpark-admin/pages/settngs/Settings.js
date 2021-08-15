@@ -1,25 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import styles from '../../assets/styles/main.module.css';
 import FormError from '../../components/form';
 
 import Modal from '../../components/modal';
 import PageWrapper from '../../components/pageWrapper';
+import HasRole from '../../components/hasRole';
 
-import { socketInstance, addUser, deleteUser } from '../../lib';
+import { socketInstance, addUser, deleteUser, formatDate } from '../../lib';
 
 const Settings = () => {
   const refModalAddUser = useRef();
   const [error, setError] = useState();
   const { register, handleSubmit, errors } = useForm();
   const [users, setUsers] = useState(null);
-  
+  const [teams, setTeams] = useState(null);
+  const [addUserPageState, setAddUserPageState] = useState(false);
+  const [addTeamPageState, setAddTeamPageState] = useState(false);
+
   useEffect(() => {
     socketInstance.emit('getAllUsers');
+    socketInstance.emit('getAllTeams');
 
     socketInstance.on('getAllUsers', data => {
       setUsers(JSON.parse(data));
+    });
+
+    socketInstance.on('getAllTeams', data => {
+      setTeams(JSON.parse(data));
     });
   }, [])
 
@@ -29,111 +38,57 @@ const Settings = () => {
     bodyClass: "pageSettings"
   }
 
-
-  const onSubmit = (formData) => {
-    addUser(formData).then((res) => {
-      if(res.error) {
-        setError(res.error)
-      } else {
-        setError(null);
-        socketInstance.emit('getAllUsers');
-      }
-    });
-  }
-
   const deleteUserById = (id) => {
     deleteUser(id).then((res) => {
       let userId = res.user_id;
 
       if(userId){
         socketInstance.emit('getAllUsers');
+        socketInstance.emit('getAllTeams');
       }
     });
+  }
+
+  const addUserPage = (e) => {
+    e.stopPropagation();
+    setAddUserPageState(true);
+  }
+
+  const addTeamPage = (e) => {
+    e.stopPropagation();
+    setAddTeamPageState(true);
+  }
+
+  if (addTeamPageState) {
+    return (
+      <Redirect to={`/admin/settings/team/a/${parseInt(Math.floor(Math.random() * Date.now()))}`} />
+    )
+  }
+
+  if (addUserPageState) {
+    return (
+      <Redirect to={`/admin/settings/users/a/${parseInt(Math.floor(Math.random() * Date.now()))}`} />
+    )
   }
 
   return (
     <PageWrapper meta={meta}>
 
       <div className={styles.containerTitle}>
-        <h3 className={styles.h3}>List of users</h3>
+        <h3 className={styles.h3}>List of users and teams</h3>
         <div>
-          <button className={styles.cta} onClick={() => refModalAddUser.current.openModal()}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <span>Add User</span>
-          </button>
+          <HasRole roles={["admin"]}>
+            <div className={styles.multipleButtons}>
+              <button className={styles.cta} onClick={(e) => addTeamPage(e)}>
+                <span>Add a new team</span>
+              </button>
+              <button className={styles.cta} onClick={(e) => addUserPage(e)}>
+                <span>Add a new user</span>
+              </button>
+            </div>
+          </HasRole>
         </div>
       </div>
-
-      <Modal ref={refModalAddUser} dataClass="modalAddUser">
-        <div className={styles.containerForm}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormError error={error} />
-
-            <div className={styles.formHalf}>
-              <div>
-                <label>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>First name</span>
-                </label>
-                <input name="firstName" defaultValue="Rémy" className={errors.firstName && styles.errorInput} ref={register({ required: true })} />
-                {errors.firstName && <span className={styles.errorField}>This field is required</span>}
-              </div>
-
-              <div>
-                <label>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>Last name</span>
-                </label>
-                <input name="lastName" defaultValue="Groleau" className={errors.lastName && styles.errorInput} ref={register({ required: true })} />
-                {errors.lastName && <span className={styles.errorField}>This field is required</span>}
-              </div>
-            </div>
-
-            <div className={styles.formHalf}>
-              <div>
-                <label>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>Username</span>
-                </label>
-                <input name="username" defaultValue="remleau" className={errors.username && styles.errorInput} ref={register({ required: true })} />
-                {errors.username && <span className={styles.errorField}>This field is required</span>}
-              </div>
-
-              <div>
-                <label>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>E-mail</span>
-                </label>
-                <input name="email" type="email" defaultValue="remleau@gmail.com" className={errors.email && styles.errorInput} ref={register({ required: true })} />
-                {errors.email && <span className={styles.errorField}>This field is required</span>}
-              </div>
-            </div>
-
-            <div>
-              <label>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                </svg>
-                <span>Password</span>
-              </label>
-              <input name="password" defaultValue="allo1234" type="password" className={errors.password && styles.errorInput} ref={register({ required: true })} />
-              {errors.password && <span className={styles.errorField}>This field is required</span>}
-            </div>
-
-            <button type="submit" className={styles.cta}>Add User</button>
-          </form>
-        </div>
-      </Modal>
 
       <table className={styles.table}>
         <thead>
@@ -150,7 +105,7 @@ const Settings = () => {
               <tr key={key}>
                 <td>{users[key].firstName} {users[key].lastName}</td>
                 <td>{users[key].email}</td>
-                <td>{users[key].lastConnexion ?? '-'}</td>
+                <td className={styles.date}>{formatDate(users[key].lastConnexion)}</td>
                 <td className={styles.actions}>
                   <button className={styles.modifyUser}>
                     <NavLink to={`/admin/settings/users/m/${users[key].user_id}`} activeClassName={styles.actif}>
@@ -159,6 +114,25 @@ const Settings = () => {
                   </button>
                   <button className={styles.btnDeleteUser} onClick={() => deleteUserById(users[key].user_id)}>Delete</button>
                 </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th><p>Team name</p></th>
+            <th><p>Members</p></th>
+          </tr>
+        </thead>
+        <tbody>
+          {teams && Object.keys(teams).map(function (key) {
+            return (
+              <tr key={key}>
+                <td>{teams[key].team_name}</td>
+                <td>{teams[key].count}</td>
               </tr>
             )
           })}

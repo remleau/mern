@@ -4,7 +4,6 @@ import { axiosInstance } from './index';
 
 import Loading from '../components/laoding';
 
-
 const cookies = new Cookies();
 
 export const UserContext = createContext();
@@ -18,6 +17,7 @@ export const UserProvider = props => {
       if(!user.error) {
         setUser(user);
         setIsLoading(false);
+        console.log(user);
       } else {
         setIsLoading(false)
       }
@@ -124,5 +124,19 @@ export const getUserProfile = async (id) => {
     return promise.data;
   } else {
     return promise.error;
+  }
+}
+
+export const addTeam = async (formData) => {
+  let promise = await axiosInstance.post('/api/team/create', formData);
+
+  console.log(promise);
+
+  if (typeof promise.data !== 'undefined') {
+    return promise.data;
+  }
+
+  return {
+    error: 'error'
   }
 }

@@ -46,3 +46,11 @@
     }
   }
 }
+
+.multipleButtons {
+  @apply flex -mx-1;
+
+  button {
+    @apply mx-1;
+  }
+}

@@ -28,7 +28,11 @@ module.exports = (database, Sequelize) => {
 		},
 		lastConnexion: {
 			type: Sequelize.DATE,
-		}
+		},
+    team_id: {
+      type: Sequelize.STRING.BINARY,
+      allowNull: false
+    }
 	});
 
 	return User;

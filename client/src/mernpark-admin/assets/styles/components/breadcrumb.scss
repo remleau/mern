@@ -1,0 +1,44 @@
+.breadcrumb {
+  @apply flex items-center rounded-md mb-2;
+  @apply text-darkGrey;
+
+  .breadcrumbPrefix {
+    @apply flex items-center;
+    height: 15px;
+
+    a {
+      @apply flex underline text-darkGrey text-opacity-75;
+    }
+
+    span {
+      @apply text-xs;
+    }
+    
+    svg {
+      width: 13px;
+      height: 13px;
+      @apply mr-2
+    }
+  }
+
+  .breadcrumbBody {
+    @apply flex items-center;
+    height: 15px;
+    
+    .breadcrumbItem {
+      @apply flex items-center text-xs;
+
+      a {
+        @apply text-xs block underline text-darkGrey text-opacity-75;
+      }
+    }
+
+    .breadcrumbSeparator {
+      @apply text-xs px-2;
+
+      svg {
+        width: 11px;
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@
   thead {
     tr {
       th {
-        @apply bg-lightGrey;
+        @apply w-1/4 bg-lightGrey;
         @apply py-3 px-6;
         @apply text-left;
         @apply border-b-1 border-lightGrey2;
@@ -48,5 +48,15 @@
         }
       }
     }
+  }
+
+  .date {
+    &:first-letter {
+      @apply capitalize;
+    }
+  }
+
+  & + table {
+    @apply mt-8;
   }
 }

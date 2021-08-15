@@ -8,13 +8,13 @@
 }
 
 .firstSection {
-  @apply mb-10 shadow-nl px-6 py-6 bg-lightGrey rounded-md bg-opacity-50;
+  @apply mb-10 shadow-sm px-6 py-6 bg-lightGrey rounded-md;
 
   .mainTitle {
     @apply flex items-center justify-between;
     
     h1 {
-      @apply flex items-center justify-between;
+      @apply flex items-center justify-between uppercase font-semibold text-darkGrey;
     }
 
     span:last-child {
@@ -24,7 +24,7 @@
 
   .mainDescription { 
     p {
-      @apply text-sm text-mediumGrey;
+      @apply text-sm text-darkGrey text-opacity-75;
     }
 
     & + .breadcrumb {
@@ -46,5 +46,17 @@
 
   .cta {
     @apply rounded-nl
+  }
+}
+
+
+.transitionPage {
+  @apply fixed top-0 left-0 z-50;
+  @apply w-full h-screen bg-white opacity-100 visible;
+  @apply flex items-center justify-center;
+  @apply transition-all duration-300;
+
+  &.animate {
+    @apply opacity-0 invisible;
   }
 }

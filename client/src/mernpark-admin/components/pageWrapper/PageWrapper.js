@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import styles from '../../assets/styles/main.module.css'
 
+import TransitionPage from '../../components/transitionPage';
 import Footer from '../footer';
 
 const PageWrapper = ({children, meta, breadcrumb}) => {
@@ -16,22 +17,14 @@ const PageWrapper = ({children, meta, breadcrumb}) => {
     ...meta
   }
 
-  console.log(breadcrumb)
-
   const { pageTitle, pageDescription, bodyClass } = newMeta;
 
   return (
     <main className={styles.main}>
 
+      {/* <TransitionPage /> */}
+
       <div className={styles.firstSection}>
-
-        <div className={styles.mainTitle}>
-          <h1 className={styles.h1}>{pageTitle}</h1>
-        </div>
-
-        <div className={styles.mainDescription}>
-          <p>{pageDescription}</p>
-        </div>
 
         {breadcrumb &&
           <div className={styles.breadcrumb}>
@@ -46,10 +39,10 @@ const PageWrapper = ({children, meta, breadcrumb}) => {
             <div className={styles.breadcrumbBody}>
               {Object.keys(breadcrumb).map((item, key) => {
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={key}>
                     <div className={styles.breadcrumbSeparator}>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
                       </svg>
                     </div>
                     <div className={styles.breadcrumbItem}>
@@ -63,6 +56,14 @@ const PageWrapper = ({children, meta, breadcrumb}) => {
             </div>
           </div>
         }
+
+        <div className={styles.mainTitle}>
+          <h1 className={styles.h1}>{pageTitle}</h1>
+        </div>
+
+        <div className={styles.mainDescription}>
+          <p>{pageDescription}</p>
+        </div>
 
       </div>
 

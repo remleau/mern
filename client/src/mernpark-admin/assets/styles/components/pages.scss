@@ -6,16 +6,17 @@
   @apply pt-2 pb-5;
 }
 
-
-
+.pageCreateTeam,
+.pageCreateUser,
 .pageUserProfil,
 .pageAddTrip {
 
   .formAddUser,
+  .formAddTeam,
   .formAddTrip {
 
     .cta {
-      @apply mt-4 rounded-nl;
+      @apply mt-5 rounded-nl;
     }
 
   }

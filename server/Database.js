@@ -20,6 +20,7 @@ let database = new Sequelize(
 );
 
 const User = models.UserModel(database, Sequelize);
+const Team = models.TeamModel(database, Sequelize);
 
 const init = async () => {
 	await database.sync({ force: true }) // force true will drop the table if it already exists
@@ -30,12 +31,22 @@ const init = async () => {
 			lastName: 'Groleau',
 			username: 'remleau',
 			email: 'remleau@gmail.com',
-			password: bcrypt.hashSync('allo1234', 8)
+			password: bcrypt.hashSync('allo1234', 8),
+      role: {
+        admin: 'admin',
+      },
+      team_id: '1'
+    });
+
+    Team.create({
+      team_id: '1',
+      team_name: 'remleau',
     });
 	});
 }
 
 module.exports = {
 	init,
-	User
+	User,
+  Team,
 };

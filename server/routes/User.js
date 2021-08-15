@@ -1,7 +1,7 @@
 let router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../database.js');
+const { User, Team } = require('../database.js');
 const Sequelize = require('sequelize');
 const config = require('../config');
 
@@ -53,8 +53,10 @@ router.post('/login', async (req, res) => {
 
 router.post('/create', async (req, res) => {
 
-  const { username, email, password, firstName, lastName , user_id } = req.body;
-
+  const { username, email, password, firstName, lastName, team_id } = req.body;
+  
+  const _team = (team_id) && await Team.findOne({ where: { team_id: team_id } });
+  
   const [user, created] = await User.findOrCreate({
     where: {
       [Sequelize.Op.or]: [
@@ -68,16 +70,22 @@ router.post('/create', async (req, res) => {
       lastName: lastName,
       username: username,
       email: email,
+      role: {
+        admin: 'member',
+      },
       password: bcrypt.hashSync(password, 8),
+      team_id: _team.team_id,
     }
   });
 
   if(created) {
-    delete user.dataValues.password;
-
-    res.status(200).send({user})
+    res.status(200).send({
+      type: 'resolve',
+      error: 'Succes',
+    })
   } else {
     res.status(200).send({
+      type: 'error',
       error: 'Already exist'
     })
   }
